@@ -47,3 +47,22 @@ class InventorySlot(models.Model):
 # (aka jak coś wybierzesz - to co już masz wraca do inv)
 # rodzaje przedmiotów? nwm może to jakoś ułatwi to wyżej
 # "unikalność" przedmiotu - żeby 2 epickie widelce można było od siebie odróżnić
+
+class Map(models.Model):
+    hero = models.ForeignKey(Hero, on_delete=models.CASCADE, related_name='maps')
+    level_number = models.IntegerField()
+    layout_data = models.JSONField(default=dict, help_text="JSON struktura granic mapy")
+
+    def __str__(self):
+        return f"Map Level {self.level_number} for {self.hero.name}"
+
+class Enemy(models.Model):
+    map_level = models.ForeignKey(Map, on_delete=models.CASCADE, related_name='enemies')
+    type = models.CharField(max_length=50)
+    hp = models.IntegerField()
+    x = models.IntegerField()
+    y = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.type} at ({self.x}, {self.y})"
+

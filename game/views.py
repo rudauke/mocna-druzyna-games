@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.db import transaction
-from .models import Hero, Item
-from .serializers import HeroSerializer, ItemSerializer
+from .models import Hero, Item, InventorySlot
+from .serializers import HeroSerializer, ItemSerializer, InventorySlotSerializer
 
 class HeroViewSet(viewsets.ModelViewSet):
     serializer_class = HeroSerializer
@@ -25,8 +25,23 @@ class ItemViewSet(viewsets.ModelViewSet):
     serializer_class = ItemSerializer
 
     def get_permissions(self):
-        # Jeśli ktoś próbuje POST, PUT, PATCH lub DELETE
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAdminUser()]
-        # Jeśli ktoś tylko ogląda (GET)
         return [permissions.AllowAny()]
+
+class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = InventorySlotSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if not hasattr(self.request.user, 'hero'):
+            return InventorySlot.objects.none()
+        return InventorySlot.objects.filter(hero=self.request.user.hero)
+
+    @action(detail=True, methods=['patch'])
+    def equip(self, request, pk=None):
+        slot = self.get_object()
+        slot.is_equipped = True
+        slot.save()
+        
+        return Response({"status": "equipped", "item": slot.item.name})
