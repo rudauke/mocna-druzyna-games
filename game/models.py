@@ -62,7 +62,7 @@ class Enemy(models.Model):
     hp = models.IntegerField()
     x = models.IntegerField()
     y = models.IntegerField()
+    verbose_name_plural = "Enemies"
 
     def __str__(self):
         return f"{self.type} at ({self.x}, {self.y})"
-
