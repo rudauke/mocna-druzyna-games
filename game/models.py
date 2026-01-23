@@ -47,8 +47,6 @@ class InventorySlot(models.Model):
 # (aka jak coś wybierzesz - to co już masz wraca do inv)
 # rodzaje przedmiotów? nwm może to jakoś ułatwi to wyżej
 # "unikalność" przedmiotu - żeby 2 epickie widelce można było od siebie odróżnić
-<<<<<<< Updated upstream
-=======
 
 class Map(models.Model):
     hero = models.ForeignKey(Hero, on_delete=models.CASCADE, related_name='maps')
@@ -68,5 +66,3 @@ class Enemy(models.Model):
 
     def __str__(self):
         return f"{self.type} at ({self.x}, {self.y})"
-
->>>>>>> Stashed changes

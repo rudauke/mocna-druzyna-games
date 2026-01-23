@@ -17,15 +17,8 @@ Including another URLconf
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-<<<<<<< Updated upstream
-from .views import ItemViewSet, HeroViewSet
-
-router = DefaultRouter()
-router.register(r'items', ItemViewSet, basename = 'item'),
-router.register(r'heros', HeroViewSet, basename = 'hero')
-=======
 from . import views
->>>>>>> Stashed changes
+from .views import ItemViewSet, HeroViewSet, InventoryViewSet
 
 urlpatterns = [
     path('heros/', views.hero_list),

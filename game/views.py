@@ -5,13 +5,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from django.db import transaction
-from .models import Hero, Item
-from .serializers import HeroSerializer, ItemSerializer
-<<<<<<< Updated upstream
-=======
+from .models import Hero, Item, InventorySlot
+from .serializers import HeroSerializer, ItemSerializer, InventorySlotSerializer
 # teraz nie wiem jakie importy już są nieistotne
 # sprawdźmy to potem, teraz nie mam siły
->>>>>>> Stashed changes
 
 @api_view(['GET', 'POST'])
 def hero_list(request): # po prostu obiekt hero (patrz niżej)
@@ -70,20 +67,7 @@ def item_detail(request, pk): # wyświetla jeden konkretny item
 #         slot = self.get_object()
 #         slot.is_equipped = True
 #         slot.save()
-        
-<<<<<<< Updated upstream
-        serializer.save(user=self.request.user)
-
-class ItemViewSet(viewsets.ModelViewSet):
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-
-    def get_permissions(self):
-        # Jeśli ktoś próbuje POST, PUT, PATCH lub DELETE
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAdminUser()]
-        # Jeśli ktoś tylko ogląda (GET)
-        return [permissions.AllowAny()]
-=======
+#
 #         return Response({"status": "equipped", "item": slot.item.name})
->>>>>>> Stashed changes
+        
+        
