@@ -1,17 +1,26 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework import status, permissions, serializers
-from rest_framework.views import APIView
+# import random
+
+# from django.shortcuts import get_object_or_404
+from rest_framework import permissions, serializers, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.decorators import action, api_view
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from django.db import transaction
-from .models import Hero, Item, InventorySlot
-from .serializers import HeroSerializer, ItemSerializer, InventorySlotSerializer
+
+from .models import Hero, Item # InventorySlot, Enemy
+from .serializers import (
+    HeroSerializer,
+    ItemSerializer,
+    #InventorySlotSerializer,
+    #MoveActionSerializer,
+    
+)
+
 # teraz nie wiem jakie importy już są nieistotne
 # sprawdźmy to potem, teraz nie mam siły
 
 @api_view(['GET', 'POST'])
+@permission_classes([permissions.IsAuthenticated])
 def hero_list(request): # po prostu obiekt hero (patrz niżej)
+    
     if request.method == 'GET':
         hero = Hero.objects.get(user=request.user)
         serializer = HeroSerializer(hero) # bo mamy tylko jeden obiekt jaki może być zwrócony -> lista nie pasuje
@@ -19,8 +28,10 @@ def hero_list(request): # po prostu obiekt hero (patrz niżej)
     
     elif request.method == 'POST':
         serializer = HeroSerializer(data=request.data)
+        
         if Hero.objects.filter(user=request.user).exists():
              raise serializers.ValidationError({"ERROR": "You already have a hero!"}) # jeden gracz -> jeden hero
+        
         elif serializer.is_valid(): # kuba sprawdź czy elif tu na pewno pasuje bo ja już nie myślę T^T
             serializer.save(user=request.user) # tu się przypisuje id
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -30,6 +41,7 @@ def hero_list(request): # po prostu obiekt hero (patrz niżej)
 # to-do: usuwanie bohaterów i update??? o ile chcemy dać taką opcję
 
 @api_view(['GET']) # lista wszystkich itemów
+@permission_classes([permissions.IsAuthenticated])
 def item_list(request):
     if request.method == 'GET':
         items = Item.objects.all()
@@ -38,6 +50,7 @@ def item_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
 def item_detail(request, pk): # wyświetla jeden konkretny item
     try:
         item = Item.objects.get(pk=pk)

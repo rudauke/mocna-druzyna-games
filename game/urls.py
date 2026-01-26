@@ -15,13 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path #include
+
 from . import views
-from .views import ItemViewSet, HeroViewSet, InventoryViewSet
 
 urlpatterns = [
-    path('heros/', views.hero_list),
-    path('items/<int:pk>/', views.item_detail),
-    path('items/', views.item_list),
+    path("heros/", views.hero_list),
+    path("items/<int:pk>/", views.item_detail),
+    path("items/", views.item_list),
 ]
