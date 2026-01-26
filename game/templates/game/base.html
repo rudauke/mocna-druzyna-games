@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        <div id="header" >
+            Pierwsza aplikacja Django
+        </div>
+        <hr/>
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div id="sidebar">
+            <p> :D </p>
+        </div>
+    </body>
+</html>

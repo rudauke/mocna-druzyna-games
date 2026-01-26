@@ -23,4 +23,6 @@ urlpatterns = [
     path("heros/", views.hero_list),
     path("items/<int:pk>/", views.item_detail),
     path("items/", views.item_list),
+#    path("heros/create", views.hero_create_form),
+    path("html/heros/dodaj_django/", views.hero_create_django_form, name="hero-create-django"),
 ]
