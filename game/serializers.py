@@ -25,21 +25,29 @@ class HeroSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ["id", "name", "damage", "rarity"]
+        fields = ["id", "name", "rarity", "item_type", "item_slot"]
 
 
-class InventorySlotSerializer(serializers.ModelSerializer):
+class ItemInInventorySerializer(serializers.ModelSerializer):
     item = ItemSerializer(read_only=True)
 
     class Meta:
         model = ItemSlot
-        fields = ["id", "item", "is_equipped"]
+        fields = ["id", "item", "quantity"]
 
 
 class EnemySerializer(serializers.ModelSerializer):
     class Meta:
         model = Enemy
         fields = ["id", "type", "hp", "x", "y"]
+        
+
+class ItemSlotSerializer(serializers.ModelSerializer):
+    item_details = ItemSerializer(read_only=True)
+
+    class Meta:
+        model = ItemSlot
+        fields = ["id", "item", "quantity"]
 
 
 class MapSerializer(serializers.ModelSerializer):
