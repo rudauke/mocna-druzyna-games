@@ -1,13 +1,16 @@
 from django.contrib import admin
 from .models import Hero, ItemTemplate, ItemInstance, Map, MapTile, Enemy, GameLog
 
+
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user', 'name', 'xp', 'level', 'current_hp', 'base_hp', 'base_strength', 'base_defense', 'current_map', 'x_pos', 'y_pos', 'direction')
+
 
 @admin.register(ItemTemplate)
-class ItemAdmin(admin.ModelAdmin):
-    pass
+class  ItemTemplateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'rarity', 'type', 'slot', 'base_strength', 'base_defense', 'base_damage', 'base_hp')
+
 
 @admin.register(ItemInstance)
 class InventorySlotAdmin(admin.ModelAdmin):
@@ -28,3 +31,6 @@ class MapTileAdmin(admin.ModelAdmin):
 @admin.register(Enemy)
 class EnemyAdmin(admin.ModelAdmin):
     pass
+
+
+
