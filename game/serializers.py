@@ -29,7 +29,7 @@ class HeroInfoSerializer(serializers.ModelSerializer):
     max_hp = serializers.IntegerField(read_only=True) #czyli zapisywane jakby na chwile, zeby potem mi sie ladnie w jasonie wyswietliło
     current_map_level = serializers.IntegerField(source='current_map.map_level', read_only=True) #model hero -> model map -> map lvl
     class Meta:
-        model = HeroSerializer
+        model = Hero
         fields = ["user", "name", "level", "xp", 
                   "current_hp", "max_hp" ,"total_strength", "total_defense", 
                   "current_map", "x_pos", "y_pos", "direction"]
@@ -51,7 +51,7 @@ class GameLogSerializer(serializers.Serializer):
 class GameStateSerializer(serializers.Serializer):
     hero_info = HeroInfoSerializer(read_only=True)
     inventory = ItemInstanceSerializer(read_only=True)
-    visible_tiles = serializers.DicField(source = 'hero.get_visible_tiles', read_only=True) #Dictionary - bo view odpowiada jakiś x i y
+    visible_tiles = serializers.DictField(source = 'hero.get_visible_tiles', read_only=True) #Dictionary - bo view odpowiada jakiś x i y
     nearby_enemy = EnemySerializer(many=True, source='get_nearby_enemies', read_only=True)
     latest_logs = GameLogSerializer(many=True, source='get_recent_logs', read_only=True)
 
