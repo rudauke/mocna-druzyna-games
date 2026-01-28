@@ -51,7 +51,9 @@ class GameLogSerializer(serializers.Serializer):
 class GameStateSerializer(serializers.Serializer):
     hero_info = HeroInfoSerializer(read_only=True)
     inventory = ItemInstanceSerializer(read_only=True)
-
+    visible_tiles = serializers.DicField(source = 'hero.get_visible_tiles', read_only=True) #Dictionary - bo view odpowiada jakiś x i y
+    nearby_enemy = EnemySerializer(many=True, source='get_nearby_enemies', read_only=True)
+    latest_logs = GameLogSerializer(many=True, source='get_recent_logs', read_only=True)
 
 
 #AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
