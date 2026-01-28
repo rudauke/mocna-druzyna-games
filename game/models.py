@@ -226,7 +226,9 @@ class Hero(models.Model):
         SOUTH = 2, _("South")
         WEST = 3, _("West")
 
-    current_map = models.ForeignKey("Map", on_delete=models.SET_NULL, null=True)
+    current_map = models.ForeignKey(
+        Map, on_delete=models.SET_NULL, null=True, related_name="heroes_on_map"
+    )
     x_pos = models.IntegerField(default=0)
     y_pos = models.IntegerField(default=0)
     direction = models.IntegerField(choices=Direction.choices, default=Direction.NORTH)
@@ -272,7 +274,7 @@ class Hero(models.Model):
             return
 
         if tile.type == MapTile.TileType.EXIT:
-            self.handle_map_next_level()  # ??
+            self.handle_map_next_level()
             return
 
         # pusty klocek - idziesz w przod
@@ -283,31 +285,30 @@ class Hero(models.Model):
 
     def handle_combat(self, enemy):
         dmg_dealt = max(1, self.total_strength)
-        dead, status = enemy.take_damage(dmg_dealt)
+        is_dead, status = enemy.take_damage(dmg_dealt)
 
-        if not dead:
-            enemy.save()
-            self.log(f"You dealt {dmg_dealt} damage to the enemy.")
-
-        if dead:
+        # is_dead = T
+        if is_dead:
             # enemy uwalony + exp
             enemy.delete()
             xp_gain = 20 * self.current_map.map_level  # balance - exp gain logic
             self.gain_xp(xp_gain)
             self.log(f"You defeated {enemy.name}!")
 
+        # is_dead = F
         else:
-            # enemy oddaje
-            dmg_taken = max(
-                0, enemy.damage - self.total_defense
-            )  # balance - defense / armor logic?
+            enemy.save()
+            self.log(f"You dealt {dmg_dealt} damage to the enemy.")
+
+            dmg_taken = max(0, enemy.damage - self.total_defense)
             self.current_hp -= dmg_taken
             self.save()
-            self.log(f"The enemy dealt {enemy.damage} damage to you.")
+            self.log(f"You took {dmg_taken} damage.")
 
             if self.current_hp <= 0:
                 self.log("YOU DIED")
-                # death_logic to add
+                # game restart logic / self.handle_player_death()
+
         return
 
     def handle_loot(self, tile):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Enemy, Hero, Item, ItemSlot, Map
+from .models import Hero, ItemTemplate, ItemInstance, Map, MapTile, Enemy, GameLog
 
 
 class HeroSerializer(serializers.ModelSerializer):
@@ -22,32 +22,28 @@ class HeroSerializer(serializers.ModelSerializer):
         read_only_fields = ["hp", "max_hp", "xp", "level", "x_pos", "y_pos"]
 
 
-class ItemSerializer(serializers.ModelSerializer):
+class ItemTemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Item
-        fields = ["id", "name", "rarity", "item_type", "item_slot"]
+        model = ItemTemplate
 
 
-class ItemInInventorySerializer(serializers.ModelSerializer):
-    item = ItemSerializer(read_only=True)
+class ItemInstanceSerializer(serializers.ModelSerializer):
+    item = ItemTemplateSerializer(read_only=True)
 
     class Meta:
-        model = ItemSlot
+        model = ItemInstance
         fields = ["id", "item", "quantity"]
 
 
 class EnemySerializer(serializers.ModelSerializer):
     class Meta:
         model = Enemy
-        fields = ["id", "type", "hp", "x", "y"]
+        fields = ["id", "name", "hp", "x", "y"]
         
 
-class ItemSlotSerializer(serializers.ModelSerializer):
-    item_details = ItemSerializer(read_only=True)
-
+class MapTileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ItemSlot
-        fields = ["id", "item", "quantity"]
+        model = MapTile
 
 
 class MapSerializer(serializers.ModelSerializer):
@@ -58,9 +54,8 @@ class MapSerializer(serializers.ModelSerializer):
         fields = ["level_number", "layout_data", "enemies"]
 
 
-class MoveActionSerializer(serializers.Serializer):
-    direction = serializers.ChoiceField(choices=["NORTH", "SOUTH", "EAST", "WEST"])
+class GameLogSerializer(serializers.Serializer):
+    class Meta:
+        model = GameLog
 
 
-class ShopBuySerializer(serializers.Serializer):
-    item_id = serializers.IntegerField()

@@ -1,32 +1,30 @@
 from django.contrib import admin
-from .models import Hero, Item, ItemInInventory, ItemSlot, Map, MapTile, Enemy
+from .models import Hero, ItemTemplate, ItemInstance, Map, MapTile, Enemy, GameLog
 
 @admin.register(Hero)
 class HeroAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'level', 'hp')
+    pass
 
-@admin.register(Item)
+@admin.register(ItemTemplate)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'rarity')
-    list_filter = ('rarity',) # overkill??
-    search_fields = ('name',)
+    pass
 
-@admin.register(ItemInInventory)
+@admin.register(ItemInstance)
 class InventorySlotAdmin(admin.ModelAdmin):
-    list_display = ('hero', 'item')
+    pass
     
-@admin.register(ItemSlot)
+@admin.register(GameLog)
 class ItemSlotAdmin(admin.ModelAdmin):
-    list_display = ('hero', 'slot_name', 'item')
+    pass
     
 @admin.register(Map)
 class MapAdmin(admin.ModelAdmin):
-    list_display = ('hero', 'map_level', 'width', 'height')
+    pass
 
 @admin.register(MapTile)
 class MapTileAdmin(admin.ModelAdmin):
-    list_display = ('map', 'x', 'y')
+    pass
 
 @admin.register(Enemy)
 class EnemyAdmin(admin.ModelAdmin):
-    list_display = ('type', 'hp', 'map_level')
+    pass
