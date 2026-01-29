@@ -43,7 +43,7 @@ class HeroInfoSerializer(serializers.ModelSerializer):
 #         fields = ["map_level"]
 
 
-class GameLogSerializer(serializers.Serializer):
+class GameLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameLog
         fields = ["hero", "message", "created_at"]

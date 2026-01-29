@@ -1,21 +1,16 @@
-# import random
-
-# from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
+from django.shortcuts import redirect, render
 from rest_framework import permissions, status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Hero, ItemInstance, Enemy, GameLog, User
-from .serializers import HeroInfoSerializer, GameStateSerializer
-from rest_framework.generics import get_object_or_404
 from .forms import HeroForm
-from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.authtoken.models import Token
-
-from .models import Hero, Map
+from .models import Enemy, GameLog, Hero, ItemInstance, Map, User
 from .serializers import GameStateSerializer, HeroInfoSerializer
+
 # teraz nie wiem jakie importy już są nieistotne
 # sprawdźmy to potem, teraz nie mam siły
 
@@ -159,7 +154,6 @@ def game_manager(request):
 
         if action == 'move':
             hero.move_forward()
-            hero.log("Moved forward.")
 
         elif action == 'turn':
             direction = request.data.get('direction')
@@ -172,7 +166,7 @@ def game_manager(request):
 
         elif action == 'equip':
             item_id = request.data.get('item_id')
-            item_instance = hero.inventory.filter(id=item_id).first()
+            item_instance = hero.inventory.filter(id=item_id).first() #type: ignore
             
             if item_instance:
                 if item_instance.equip():

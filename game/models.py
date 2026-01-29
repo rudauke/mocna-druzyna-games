@@ -437,6 +437,7 @@ class Hero(models.Model):
 
     def get_recent_logs(self, limit=10):
         return self.logs.all()[:limit]  # type: ignore
+        
 
     def __str__(self):
         return f"{self.name} (Lvl {self.level})"
