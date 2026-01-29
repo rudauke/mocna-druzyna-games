@@ -27,4 +27,5 @@ urlpatterns = [
         views.hero_create_django_form,
         name="hero-create-django",
     ),
+    path("game/", views.game_manager),
 ]
