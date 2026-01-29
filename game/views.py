@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from .models import Hero 
-from .serializers import HeroSerializer
+from .serializers import HeroInfoSerializer
 from rest_framework.generics import get_object_or_404
 from .forms import HeroForm
 from django.shortcuts import redirect, render
@@ -20,7 +20,7 @@ def hero_list(request):
     if request.method == 'GET':
         if request.user.is_staff: # widok dla adminów -> mogą zobaczyć wszystkich bohaterów, nawet jeśli nie są ich; gracze tylko swoich
             hero = Hero.objects.all()
-            serializer = HeroSerializer(hero, many = True)
+            serializer = HeroInfoSerializer(hero, many = True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
         # jeżeli nie chcemy generic komunikaty, który idzie razem z get_object_or_404 mamy jeszcze taką opcję
@@ -32,7 +32,7 @@ def hero_list(request):
         #   return Response({"ERROR": "Nie masz jeszcze bohatera."}, status=status.HTTP_404_NOT_FOUND)
         # i jest cacy?
         hero = get_object_or_404(Hero, user=request.user)
-        serializer = HeroSerializer(hero)
+        serializer = HeroInfoSerializer(hero)
         return Response(serializer.data)
 
     # elif request.method == 'POST':

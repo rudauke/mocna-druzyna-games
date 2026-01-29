@@ -28,11 +28,13 @@ class Map(models.Model):
     hero = models.ForeignKey("Hero", on_delete=models.CASCADE, related_name="maps")
     width = models.IntegerField(default=10)
     height = models.IntegerField(default=10)
-    map_level = models.IntegerField()
+    map_level = models.IntegerField(default=1)
 
     @classmethod
-    def create_map(cls, hero, width, height):
-        new_map = cls.objects.create(hero=hero, width=width, height=height)
+    def create_map(cls, hero, width, height, map_level):
+        new_map = cls.objects.create(
+            hero=hero, width=width, height=height, map_level=map_level
+        )
 
         walls = []
         floors = []
@@ -72,7 +74,7 @@ class Map(models.Model):
 
         MapTile.objects.bulk_create(tiles_to_create)
 
-        new_map.spawn_enemies(floors, Map.map_level)
+        new_map.spawn_enemies(floors, map_level)
         new_map.spawn_loot(floors)
 
         hero.current_map = new_map
@@ -83,7 +85,7 @@ class Map(models.Model):
         return new_map
 
     def spawn_enemies(self, available_tiles, map_level):
-        count = random.randint(3, 5 + map_level)
+        count = random.randint(3, (5 + map_level))
 
         count = min(count, len(available_tiles))
 
@@ -227,7 +229,11 @@ class Hero(models.Model):
         WEST = 3, _("West")
 
     current_map = models.ForeignKey(
-        Map, on_delete=models.SET_NULL, null=True, blank=True, related_name="heroes_on_map"
+        Map,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="heroes_on_map",
     )
     x_pos = models.IntegerField(default=0)
     y_pos = models.IntegerField(default=0)
@@ -327,9 +333,12 @@ class Hero(models.Model):
 
         next_map_level = self.current_map.map_level + 1
 
-        new_map = Map.create_map(self, self.current_map.width, self.current_map.height)
-        new_map.map_level = next_map_level
-        new_map.save()
+        new_map = Map.create_map(
+            self,
+            self.current_map.width,
+            self.current_map.height,
+            map_level=next_map_level,
+        )
 
         self.log(f"You entered Map Level {next_map_level}.")
 
@@ -365,69 +374,69 @@ class Hero(models.Model):
             total=models.Sum("template__base_hp")
         )  # type: ignore
         return self.base_hp + (equipment_bonus["total"] or 0)
-        
-    #funkcja pomocnicza do get_visible_tiles, get_nearby_enemies
+
+    # funkcja pomocnicza do get_visible_tiles, get_nearby_enemies
     def get_veiw_coords(self):
         x, y = self.x_pos, self.y_pos
-        
+
         if self.direction == self.direction.NORTH:
             return {
-                'current': (x, y),
-                'front': (x, y - 1),
-                'left': (x - 1, y),
-                'right': (x + 1, y)
+                "current": (x, y),
+                "front": (x, y - 1),
+                "left": (x - 1, y),
+                "right": (x + 1, y),
             }
         elif self.direction == self.direction.EAST:
             return {
-                'current': (x, y),
-                'front': (x + 1, y),
-                'left': (x, y - 1),
-                'right': (x, y + 1)
+                "current": (x, y),
+                "front": (x + 1, y),
+                "left": (x, y - 1),
+                "right": (x, y + 1),
             }
         elif self.direction == self.direction.SOUTH:
             return {
-                'current': (x, y),
-                'front': (x, y + 1),
-                'left': (x + 1, y),
-                'right': (x - 1, y)
+                "current": (x, y),
+                "front": (x, y + 1),
+                "left": (x + 1, y),
+                "right": (x - 1, y),
             }
         elif self.direction == self.direction.WEST:
             return {
-                'current': (x, y),
-                'front': (x - 1, y),
-                'left': (x, y + 1),
-                'right': (x, y - 1)
+                "current": (x, y),
+                "front": (x - 1, y),
+                "left": (x, y + 1),
+                "right": (x, y - 1),
             }
         return {}
 
     def get_visible_tiles(self):
         if not self.current_map:
             return {}
-        
+
         view_coords = self.get_veiw_coords()
-        
+
         visible_tiles = {}
-        
+
         for view, (vx, vy) in view_coords.items():
             tile = self.current_map.tiles.filter(x=vx, y=vy).first()
             visible_tiles[view] = tile.type
-            
+
         return visible_tiles
-        
+
     def get_nearby_enemies(self):
         view_coords = self.get_veiw_coords()
-        view_locations = list(view_coords.items())
-        all_enemies = self.current_map.enemeis.all()
+        view_locations = list(view_coords.values())
+        all_enemies = self.current_map.enemies.all()
         visible_enemies = []
-        
+
         for enemy in all_enemies:
             if (enemy.x, enemy.y) in view_locations:
-                visible_enemies.append(enemy)    
-                
-        return visible_enemies 
-        
-    def get_recent_logs(self, limit = 10):
-        return self.logs.all()[:limit]  #type: ignore
+                visible_enemies.append(enemy)
+
+        return visible_enemies
+
+    def get_recent_logs(self, limit=10):
+        return self.logs.all()[:limit]  # type: ignore
 
     def __str__(self):
         return f"{self.name} (Lvl {self.level})"
