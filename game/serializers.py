@@ -7,7 +7,7 @@ class ItemTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemTemplate
         fields = ["name", "description", "rarity", "type", "slot", 
-                  "base_strenght", "base_defense", "base_hp"]
+                  "base_strength", "base_defense", "base_hp"]
 
 
 class ItemInstanceSerializer(serializers.ModelSerializer):
@@ -32,7 +32,7 @@ class HeroInfoSerializer(serializers.ModelSerializer):
         model = Hero
         fields = ["user", "name", "level", "xp", 
                   "current_hp", "max_hp" ,"total_strength", "total_defense", 
-                  "current_map", "x_pos", "y_pos", "direction"]
+                  "current_map_level", "x_pos", "y_pos", "direction"]
         
 
 # class MapSerializer(serializers.ModelSerializer):
@@ -49,9 +49,9 @@ class GameLogSerializer(serializers.Serializer):
         fields = ["hero", "message", "created_at"]
 
 class GameStateSerializer(serializers.Serializer):
-    hero_info = HeroInfoSerializer(read_only=True)
-    inventory = ItemInstanceSerializer(read_only=True)
-    visible_tiles = serializers.DictField(source = 'hero.get_visible_tiles', read_only=True) #Dictionary - bo view odpowiada jakiś x i y
+    hero_info = HeroInfoSerializer(source='*', read_only=True)
+    inventory = ItemInstanceSerializer(many=True, read_only=True)
+    visible_tiles = serializers.DictField(source = 'get_visible_tiles', read_only=True) #Dictionary - bo view odpowiada jakiś x i y
     nearby_enemy = EnemySerializer(many=True, source='get_nearby_enemies', read_only=True)
     latest_logs = GameLogSerializer(many=True, source='get_recent_logs', read_only=True)
 

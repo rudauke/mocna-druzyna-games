@@ -180,11 +180,11 @@ class ItemInstance(models.Model):
         if not self.template.slot:
             return False
 
-        current_equiped = ItemInstance.objects.filter(
+        current_equipped = ItemInstance.objects.filter(
             hero=self.hero, is_equipped=True, template__slot=self.template.slot
         ).exclude(id=self.id)  # type: ignore
 
-        for item in current_equiped:
+        for item in current_equipped:
             item.is_equipped = False
             item.save()
 
@@ -376,31 +376,31 @@ class Hero(models.Model):
         return self.base_hp + (equipment_bonus["total"] or 0)
 
     # funkcja pomocnicza do get_visible_tiles, get_nearby_enemies
-    def get_veiw_coords(self):
+    def get_view_coords(self):
         x, y = self.x_pos, self.y_pos
 
-        if self.direction == self.direction.NORTH:
+        if self.direction == self.Direction.NORTH:
             return {
                 "current": (x, y),
                 "front": (x, y - 1),
                 "left": (x - 1, y),
                 "right": (x + 1, y),
             }
-        elif self.direction == self.direction.EAST:
+        elif self.direction == self.Direction.EAST:
             return {
                 "current": (x, y),
                 "front": (x + 1, y),
                 "left": (x, y - 1),
                 "right": (x, y + 1),
             }
-        elif self.direction == self.direction.SOUTH:
+        elif self.direction == self.Direction.SOUTH:
             return {
                 "current": (x, y),
                 "front": (x, y + 1),
                 "left": (x + 1, y),
                 "right": (x - 1, y),
             }
-        elif self.direction == self.direction.WEST:
+        elif self.direction == self.Direction.WEST:
             return {
                 "current": (x, y),
                 "front": (x - 1, y),
@@ -413,7 +413,7 @@ class Hero(models.Model):
         if not self.current_map:
             return {}
 
-        view_coords = self.get_veiw_coords()
+        view_coords = self.get_view_coords()
 
         visible_tiles = {}
 
@@ -424,7 +424,7 @@ class Hero(models.Model):
         return visible_tiles
 
     def get_nearby_enemies(self):
-        view_coords = self.get_veiw_coords()
+        view_coords = self.get_view_coords()
         view_locations = list(view_coords.values())
         all_enemies = self.current_map.enemies.all()
         visible_enemies = []
