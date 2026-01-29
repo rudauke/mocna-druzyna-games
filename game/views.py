@@ -74,6 +74,54 @@ def hero_create_django_form(request):
 
 # to-do: usuwanie bohaterów i update??? o ile chcemy dać taką opcję
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_user(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response(
+                {'error': 'Username and password are required.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if User.objects.filter(username=username).exists():
+            return Response(
+                {'error': 'Username already taken.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.create_user(username=username, password=password)
+        token, _ = Token.objects.get_or_create(user=user)
+        
+        return Response(
+            {'token': token.key, 'user_id': user.pk}, 
+            status=status.HTTP_201_CREATED
+        )
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_user(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        user = authenticate(username=username, password=password)
+        
+        if user:
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response(
+                {'token': token.key, 'user_id': user.pk}, 
+                status=status.HTTP_200_OK
+            )
+        
+        return Response(
+            {'error': 'Invalid credentials'}, 
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def game_manager(request):
