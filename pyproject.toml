@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mocna-druzyna-games"
+version = "0.1.0"
+description = "Text-based RPG with Django REST API — heroes, maps, turn-based combat, loot"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "rudauke" }]
+requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django :: 6.0",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "django>=6.0,<7.0",
+    "djangorestframework>=3.15",
+    "django-filter>=24.0",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "django-stubs>=5.0",
+    { include-group = "test" },
+]
+test = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "pytest-cov>=5.0",
+    "pytest-asyncio>=0.23",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = ["DJ"]  # Flake8-Django rules
+ignore = ["D212", "D205"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = "."
+testpaths = ["game"]
+addopts = "--cov=game --cov-report=term-missing"
+asyncio_mode = "auto"
